@@ -1,3 +1,17 @@
 twat
 Watch hashtaged tweets across the earth in real time
 
+What works:
+	the twitter stuff works, the twitter data streaming part of the project works fine
+	It finds tweets with geolocation data, and hashtags. Unfortunately my account only has access to the spritzer so
+	Not many of the tweets that come down the pipe have all the nessicary data.
+
+Todo:
+	1) Move away from eventlet
+		The version of eventlet in pypi has a very outdated websocket server implementation
+		I am currently using a patched version which i patched again myself to make work with chrome 19
+	2) Serve ws.html and ws.js 
+		Right now these are just browsed to on my local machine
+	3) Actually plot points on a map
+		spent most of my time thus far making those stupid websockets work
+
