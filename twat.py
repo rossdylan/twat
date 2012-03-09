@@ -51,6 +51,13 @@ def streamData(response,hashCounts):
     except KeyboardInterrupt:
         print "error"
         exit(1)
+def toGeoJson(d):
+    geojsonblobs = []
+    for location in d:
+        location = location.split(", ")
+        location = (float(location[0][1:]), float(location[1][:-1]))
+        geojsonblobs.append({"type": "Point", "coordinates": location})
+    return geojsonblobs
 
 if __name__ == "__main__":
     hashCounts = {}
@@ -75,7 +82,7 @@ if __name__ == "__main__":
                 if last == hashCounts:
                     continue
                 else:
-                    ws.send(json.dumps(hashCounts))
+                    ws.send(json.dumps(toGeoJson(hashCounts)))
                     last = hashCounts
         clients -= 1
         print "Disconnecting"
@@ -89,10 +96,18 @@ if __name__ == "__main__":
             if environ['HTTP_UPGRADE'] == 'websocket':
                 environ['HTTP_UPGRADE'] = 'WebSocket'
             return hashtag_callback(environ,start_response)
+        elif environ['PATH_INFO'] == '/ws.js':
+            start_response('200', [('Content-Type', 'text/javascript')])
+            return [open("ws.js").read()]
+        elif environ['PATH_INFO'] == '/ws.html':
+            start_response('200', [('Content-Type', 'text/html')])
+            return [open("ws.html").read()]
+        elif environ['PATH_INFO'] == "/polymaps.min.js":
+            start_response('200', [('Content-Type', 'text/javascript')])
+            return [open("polymaps.min.js").read()]
         else:
-            start_response('404')
+            start_response("404", [])
             return []
-
     r = requests.get('https://stream.twitter.com/1/statuses/sample.json',
             data={'track': 'requests'}, auth=(raw_input("username: "), raw_input("password: ")))
 
